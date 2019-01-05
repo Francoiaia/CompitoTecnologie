@@ -5,6 +5,10 @@
 */
 package compitotepgestione;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
@@ -13,12 +17,13 @@ import javax.swing.JList;
  * @author Francesco
  */
 public class FramePrincipale extends javax.swing.JFrame {
-    
+    ConnectionSqlMagic csm = new ConnectionSqlMagic("calendari");
     /**
      * Creates new form FramePrincipale
      */
     public FramePrincipale() {
         initComponents();
+        
         
     }
     
@@ -52,10 +57,10 @@ public class FramePrincipale extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 701, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(jButton1)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -71,14 +76,18 @@ public class FramePrincipale extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        ListaAttività.setModel(new DefaultListModel());
-        DefaultListModel lm1  = (DefaultListModel) ListaAttività.getModel();
-        Lavoro lavoro = new Lavoro("pepe", "ad", "ad", "asdf", 1);
-        lm1.addElement(lavoro.toString());
-        
-        
-        
-
+        try {
+            ResultSet query1 = csm.selectAll("consigli");
+            while (query1.next()) {
+                Consiglio con = new Consiglio(query1.getString("classe"), query1.getDate("Data"),query1.getDate("Ora") , query1.getString("Luogo"), query1.getBoolean("SoloDocenti"));
+                ListaAttività.setModel(new DefaultListModel());
+                DefaultListModel lm1  = (DefaultListModel) ListaAttività.getModel();
+                
+                lm1.addElement(con);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(FramePrincipale.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
     
     /**
